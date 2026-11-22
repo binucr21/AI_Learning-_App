@@ -329,24 +329,28 @@ function runLocalCallAgent(text, scenario, agentKey, history) {
   let pro = '';
   let tip = '';
 
-  const isGreeting = /^(\(the call|\(i changed|call connected|hello|hi|hey|good morning|good afternoon)/i.test(lower);
+  const isGreeting = /^(\(the call|\(i changed|call connected|hello|hi|hey|good\s*(morning|afternoon|evening)|howdy)/i.test(lower);
   const userWordCount = raw.split(/\s+/).filter(Boolean).length;
 
   if (isGreeting) {
-    const greetings = {
-      'Free talk': `${agent.name} here! It's fantastic to connect. How has your day been treating you so far?`,
-      'Daily conversation': `Good to speak with you! Let's get right into today's conversation. What have you been up to?`,
-      'Self introduction': `Hello! I'm ${agent.name}. In this session, let's practice introducing yourself with impact. What's your name, and what do you do?`,
-      'Job Interview': `Welcome to this interview session. I'm ${agent.name}. To kick things off, could you walk me through your background and what you specialize in?`,
-      'Office meeting': `Hi everyone, let's get our meeting underway. What's the main update or project milestone you'd like to share today?`,
-      'Shopping': `Hello! Welcome to our store. Are you looking for anything specific today, or just browsing around?`,
-      'Restaurant': `Good evening, welcome! Have you had a chance to look over our menu, or would you like a quick recommendation?`,
-      'Travel Abroad': `Welcome to airport check-in! Where are you flying today, and do you have any luggage to check?`,
-      'Friends and family': `Hey! So glad we caught up today. What's new with you recently? Anything exciting?`,
-      'Higher Studies': `Hello! Welcome to our seminar discussion. What subject are you focusing on, and what's an interesting topic you've explored?`,
-      'Promotion': `Thanks for meeting with me to discuss your career progression. What key accomplishments from the past quarter are you most proud of?`
-    };
-    reply = greetings[scenario] || greetings['Free talk'];
+    if (/^(hello|hi|hey|good\s*(morning|afternoon|evening)|howdy)\b/i.test(lower)) {
+      reply = `Hello! I hear you loud and clear. It's great to connect! How are you doing today? What would you like to discuss in this ${scenario} session?`;
+    } else {
+      const greetings = {
+        'Free talk': `${agent.name} here! It's fantastic to connect. How has your day been treating you so far?`,
+        'Daily conversation': `Good to speak with you! Let's get right into today's conversation. What have you been up to?`,
+        'Self introduction': `Hello! I'm ${agent.name}. In this session, let's practice introducing yourself with impact. What's your name, and what do you do?`,
+        'Job Interview': `Welcome to this interview session. I'm ${agent.name}. To kick things off, could you walk me through your background and what you specialize in?`,
+        'Office meeting': `Hi everyone, let's get our meeting underway. What's the main update or project milestone you'd like to share today?`,
+        'Shopping': `Hello! Welcome to our store. Are you looking for anything specific today, or just browsing around?`,
+        'Restaurant': `Good evening, welcome! Have you had a chance to look over our menu, or would you like a quick recommendation?`,
+        'Travel Abroad': `Welcome to airport check-in! Where are you flying today, and do you have any luggage to check?`,
+        'Friends and family': `Hey! So glad we caught up today. What's new with you recently? Anything exciting?`,
+        'Higher Studies': `Hello! Welcome to our seminar discussion. What subject are you focusing on, and what's an interesting topic you've explored?`,
+        'Promotion': `Thanks for meeting with me to discuss your career progression. What key accomplishments from the past quarter are you most proud of?`
+      };
+      reply = greetings[scenario] || greetings['Free talk'];
+    }
     praise = 'Connection established! Speak naturally.';
     pro = 'Ready when you are! Let’s practice fluent, confident speaking.';
   } else {
@@ -725,12 +729,22 @@ server.on('error', (err) => {
   }
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`====================================================`);
-  console.log(`🚀 ATHPEST Call Manager Agent is running!`);
-  console.log(`🔗 Local URL: http://localhost:${currentPort}`);
-  console.log(`🤖 Default Agent: ${AGENTS.aria.name} (${AGENTS.aria.role})`);
-  console.log(`🎙️ Mistake Detection: ACTIVE (Real-time Spoken English Analysis)`);
-  console.log(`====================================================`);
-});
+if (require.main === module) {
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`====================================================`);
+    console.log(`🚀 ATHPEST Call Manager Agent is running!`);
+    console.log(`🔗 Local URL: http://localhost:${currentPort}`);
+    console.log(`🤖 Default Agent: ${AGENTS.aria.name} (${AGENTS.aria.role})`);
+    console.log(`🎙️ Mistake Detection: ACTIVE (Real-time Spoken English Analysis)`);
+    console.log(`====================================================`);
+  });
+}
+
+module.exports = {
+  server,
+  runLocalCallAgent,
+  AGENTS,
+  GRAMMAR_RULES,
+  PORT
+};
 
