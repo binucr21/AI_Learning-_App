@@ -1,0 +1,20 @@
+{
+  "name": "athpest-call-agent",
+  "version": "2.0.0",
+  "description": "Professional AI Call Manager Agent for Spoken English with Real-Time Mistake Detection & Full Call Lifecycle Management",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test_agent.js"
+  },
+  "keywords": [
+    "ai-agent",
+    "call-manager",
+    "voice-call",
+    "english-tutor",
+    "speech-recognition",
+    "mistake-detection"
+  ],
+  "author": "ATHPEST AI",
+  "license": "MIT"
+}

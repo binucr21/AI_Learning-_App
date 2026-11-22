@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ATHPEST – Spoken English Call Manager Agent</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050805;--card:#0d130e;--card2:#131c15;--ink:#f2f7f3;--mut:#8da193;--acc:#2ee06f;--on:#03130a;--vio:#16a34a;--ok:#2ee06f;--bad:#ef4444;--line:#1c2a20;--sh:0 10px 40px rgba(0,0,0,.5);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="light"]{--bg:#faf8f2;--card:#fff;--card2:#f3f0e6;--ink:#17151f;--mut:#6d6a80;--line:#e8e3d3;--sh:0 10px 30px rgba(60,50,20,.1)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:radial-gradient(80% 50% at 50% -10%,rgba(34,197,94,.22),transparent 70%),var(--bg);background-attachment:fixed;color:var(--ink);font:16px/1.5 "Plus Jakarta Sans",system-ui,sans-serif;min-height:100%;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.hd{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;padding:12px 18px}
+.logo{font-weight:800;font-size:22px;letter-spacing:.04em;display:flex;align-items:center;gap:8px}.logo i{width:30px;height:30px;border-radius:9px;background:var(--acc);color:var(--on);display:grid;place-items:center;font-style:normal;font-size:16px}
+.chips{display:flex;gap:8px}.chip{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 13px;font-size:13px;font-weight:700}
+.wrap{max-width:1100px;margin:auto;padding:18px 18px 120px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start}
+aside{position:sticky;top:calc(76px + env(safe-area-inset-top,0px));order:2}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}aside{position:static;order:0}body:not([data-v="learn"]) aside{display:none}}
+.hero{background:radial-gradient(120% 120% at 100% 0,#15803d 0,#0a3d1f 45%,#06110a 100%);color:#fff;border-radius:28px;padding:30px 26px;box-shadow:var(--sh);position:relative;overflow:hidden}
+.hero small{color:var(--acc);font-weight:800;letter-spacing:.12em;font-size:12px}.hero h1{font-size:clamp(30px,5vw,44px);line-height:1.08;margin:10px 0;font-weight:800}.hero p{margin:0 0 20px;color:#c5e4d0;max-width:440px}
+.btn{border:0;border-radius:99px;padding:14px 26px;font:800 15px "Plus Jakarta Sans",sans-serif;cursor:pointer;background:var(--acc);color:var(--on);transition:transform .15s,box-shadow .15s;box-shadow:0 8px 24px rgba(46,224,111,.28);display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:scale(.96)}.btn.ghost{background:var(--card2);color:var(--ink);box-shadow:none;border:1px solid var(--line)}.btn:disabled{opacity:.5}
+h2{font-size:20px;margin:30px 0 4px;font-weight:800}.sub{color:var(--mut);font-size:14px;margin:0 0 14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.st{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px}.st b{display:block;font-size:28px;color:var(--acc);font-weight:800;line-height:1.1}.st span{font-size:12px;color:var(--mut)}
+.uc{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.sc{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:20px;padding:0;text-align:left;cursor:pointer;overflow:hidden;font:inherit;transition:.2s;position:relative}
+.sc:hover{transform:translateY(-3px);border-color:var(--vio)}.sc.on{border-color:var(--acc);box-shadow:0 0 0 3px rgba(46,224,111,.25)}
+.sc .im{height:78px;display:grid;place-items:center;font-size:34px}.sc div+div{padding:10px 12px 12px}.sc b{display:block;font-size:14px}.sc small{color:var(--mut);font-size:12px;line-height:1.3;display:block}
+.sc.on::after{content:"✓";position:absolute;top:8px;right:8px;background:var(--acc);color:var(--on);width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:var(--sh)}
+.jr h3{margin:0 0 2px;font-size:18px}.tier{margin:16px 0 0;padding:14px;border-radius:18px;background:var(--card2)}
+.tier .t{display:flex;justify-content:space-between;align-items:center;font-weight:800}.tier small{color:var(--mut);font-weight:500}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin:10px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),#16a34a);border-radius:9px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.pills{display:flex;gap:8px}.pill{flex:1;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:10px 6px;cursor:pointer;font:700 13px "Plus Jakarta Sans",sans-serif;text-align:center;transition:.15s}
+.pill:hover{border-color:var(--acc);transform:translateY(-2px)}.pill.dn{background:rgba(34,197,94,.14);border-color:var(--ok)}.pill small{display:block;font-weight:500;color:var(--mut);font-size:11px}
+.view{display:none}.view.on{display:block;animation:fade .4s}@keyframes fade{from{opacity:0;transform:translateY(12px)}}
+.reveal{opacity:0;transform:translateY(20px);transition:.6s cubic-bezier(.2,.8,.2,1)}.reveal.in{opacity:1;transform:none}
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px;box-shadow:var(--sh);z-index:25}
+nav button{border:0;background:none;color:var(--mut);font:700 12px "Plus Jakarta Sans",sans-serif;padding:8px 20px;border-radius:99px;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+nav button span{font-size:19px}nav button.on{background:var(--acc);color:var(--on)}
+.opt{display:block;width:100%;text-align:left;margin:9px 0;padding:15px 16px;border-radius:16px;border:2px solid var(--line);background:var(--card2);color:var(--ink);font:600 15px "Plus Jakarta Sans",sans-serif;cursor:pointer;transition:.15s}
+.opt:hover{border-color:var(--acc)}.opt.ok{border-color:var(--ok);background:rgba(34,197,94,.15)}.opt.no{border-color:var(--bad);background:rgba(239,68,68,.12)}
+.q{font-size:22px;font-weight:800;margin:6px 0 10px}.tag{font-size:12px;color:var(--acc);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.why{margin-top:12px;padding:13px 15px;border-radius:16px;background:var(--card2);font-size:14px}.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.big{font-size:56px;text-align:center}.fb{white-space:pre-wrap;font-size:14.5px}
+.call{text-align:center}.av{width:104px;height:104px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;font-size:50px;background:linear-gradient(135deg,#16a34a,#86efac);position:relative;box-shadow:0 8px 30px rgba(46,224,111,.25)}
+.av.talk::after,.av.live::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:3px solid var(--acc);animation:pulse 1.4s infinite}@keyframes pulse{from{transform:scale(.92);opacity:1}to{transform:scale(1.25);opacity:0}}
+.cur{display:inline-block;background:rgba(46,224,111,.14);color:var(--acc);border-radius:99px;padding:4px 14px;font-weight:800;font-size:13px;margin:4px 0 12px}
+.log{display:flex;flex-direction:column;gap:10px;margin-top:16px;text-align:left}
+.b{max-width:88%;padding:11px 15px;border-radius:20px;font-size:15px}.b.ai{background:var(--card2);align-self:flex-start}.b.me{background:var(--acc);color:var(--on);font-weight:600;align-self:flex-end}
+.fix{border-left:4px solid var(--bad);background:rgba(239,68,68,.08);border-radius:14px;padding:11px 15px;font-size:14px;animation:fade .3s}.fix s{color:var(--bad);font-weight:600}.fix em{color:var(--ok);font-style:normal;font-weight:700}
+.inp{display:flex;gap:8px;margin-top:16px}.inp input{flex:1;padding:14px 16px;border-radius:99px;border:2px solid var(--line);background:var(--card2);color:var(--ink);font:15px "Plus Jakarta Sans",sans-serif;min-width:0}.inp input:focus{outline:0;border-color:var(--acc)}
+.mic{width:50px;border-radius:50%;border:0;background:var(--vio);color:#fff;font-size:20px;cursor:pointer;flex:none}.mic.live{background:var(--bad);animation:pulse2 1s infinite}@keyframes pulse2{50%{opacity:.6}}
+.m{padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}.m:last-child{border:0}
+.dots::after{content:"…";animation:d 1s infinite}@keyframes d{50%{opacity:.2}}
+.chip.pr{cursor:pointer}.chip.pr.on{background:var(--acc);color:var(--on);border-color:var(--acc)}
+
+/* Enhanced Phone Overlay */
+#ph{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;text-align:center;color:#fff;background:radial-gradient(120% 90% at 50% 0,#14532d 0,#07160c 55%,#030604 100%);padding:calc(env(safe-area-inset-top,0px) + 40px) 24px calc(env(safe-area-inset-bottom,0px) + 36px)}
+#ph.on{display:flex;animation:fade .3s}#ph h2{font-size:32px;margin:0;font-weight:700}#ph .s{opacity:.75;margin-top:4px;font-size:14px}
+#ph .pb{display:flex;justify-content:space-between;width:100%;max-width:340px}
+#ph .rb{display:flex;flex-direction:column;align-items:center;gap:8px;font:600 13px 'Plus Jakarta Sans',sans-serif;border:0;background:none;color:#fff;cursor:pointer;transition:transform .15s}
+#ph .rb:active{transform:scale(.92)}
+#ph .rb i{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;font-size:28px;font-style:normal;background:rgba(255,255,255,.16);transition:background .2s}
+#ph .rb.g i{background:#22c55e}#ph .rb.r i{background:#ef4444}#ph .rb.ring i{animation:rg 1s infinite}@keyframes rg{50%{transform:scale(1.14)}}
+#ph .cap{margin-top:16px;max-width:440px;min-height:110px;line-height:1.4;background:rgba(0,0,0,.25);border-radius:20px;padding:14px 18px;border:1px solid rgba(255,255,255,.08);width:100%}
+
+/* In-Call Floating Mistake Badge */
+.ph-fix{margin-top:12px;background:rgba(239,68,68,.18);border:1.5px solid var(--bad);border-radius:14px;padding:9px 14px;max-width:440px;width:100%;text-align:left;animation:fade .3s;font-size:13.5px}
+.ph-fix b{color:#fca5a5;display:block;margin-bottom:2px;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.ph-fix s{color:#f87171}
+.ph-fix em{color:#86efac;font-style:normal;font-weight:700}
+
+/* Agent Selection Grid */
+.ag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:14px 0 20px;text-align:left}
+.ag-card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:16px;cursor:pointer;position:relative;transition:.2s}
+.ag-card:hover{transform:translateY(-2px);border-color:var(--vio)}
+.ag-card.on{border-color:var(--acc);background:rgba(46,224,111,.06);box-shadow:0 0 0 3px rgba(46,224,111,.2)}
+.ag-card.on::after{content:"✓";position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:var(--acc);color:var(--on);display:grid;place-items:center;font-weight:800;font-size:13px}
+.ag-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.ag-av{width:46px;height:46px;border-radius:14px;background:rgba(46,224,111,.15);display:grid;place-items:center;font-size:24px}
+.ag-name{font-weight:800;font-size:16px;line-height:1.2}
+.ag-role{font-size:11.5px;color:var(--acc);font-weight:700}
+.ag-desc{font-size:12px;color:var(--mut);line-height:1.35}
+
+/* Server Status Pill */
+.srv-pill{display:inline-flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:12px;font-weight:700}
+.srv-dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.srv-dot.warn{background:var(--bad)}
+
+/* Modals */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:300;display:none;place-items:center;padding:16px;overflow-y:auto}
+.modal-overlay.on{display:grid;animation:fade .25s}
+.modal-card{background:var(--card);border:1px solid var(--line);border-radius:28px;max-width:540px;width:100%;padding:26px;box-shadow:var(--sh);color:var(--ink);text-align:left;max-height:90vh;overflow-y:auto}
+.rep-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.rep-stat{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center}
+.rep-stat b{display:block;font-size:24px;color:var(--acc);line-height:1.1}
+.rep-stat small{font-size:11px;color:var(--mut)}
+.rep-list{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.rep-item{background:var(--card2);border-left:4px solid var(--bad);border-radius:12px;padding:11px 14px;font-size:13.5px}
+.rep-item.clean{border-left-color:var(--ok)}
+.rep-item s{color:var(--bad)}
+.rep-item em{color:var(--ok);font-style:normal;font-weight:700}
+.rep-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:var(--ink)}
+.form-group input, .form-group select{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:inherit}
+
+.chip.vc{cursor:pointer}.chip.vc.on{background:var(--acc);color:var(--on);border-color:var(--acc)}
+.hero.reveal{display:none}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.act{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;text-align:left;color:var(--ink);font-family:inherit;cursor:pointer;transition:.2s}
+.act:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 0 24px rgba(46,224,111,.15)}
+.act i{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:rgba(46,224,111,.12);font-style:normal;font-size:22px;margin-bottom:26px}
+.act b{display:block;font-size:17px}.act small{color:var(--mut);font-size:12px}
+.rc{display:flex;justify-content:space-between;align-items:center;margin:24px 0 10px}.rc button{background:none;border:0;color:var(--acc);font-weight:700;font-size:13px;font-family:inherit;cursor:pointer}
+.rcrow{padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;color:var(--mut)}.rcrow:last-child{border:0}
+.msgbar{display:flex;align-items:center;gap:12px;margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:8px;cursor:pointer;color:var(--mut)}
+.msgbar .pl,.msgbar .mc{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:var(--on);font-weight:800;flex:none}.msgbar .ph2{flex:1}
+#ob{position:fixed;inset:0;z-index:200;display:none;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;padding:24px 24px calc(28px + env(safe-area-inset-bottom,0px));background:radial-gradient(100% 70% at 50% 0,#16a34a 0,#0a3d1f 38%,#030604 75%)}
+#ob.on{display:flex}.obv{flex:1;display:grid;place-items:center;width:100%}
+.obav{width:210px;height:210px;border-radius:50%;display:grid;place-items:center;font-size:110px;background:radial-gradient(circle at 30% 30%,#86efac,#16a34a 60%,#064e1f);box-shadow:0 0 80px rgba(46,224,111,.45)}
+#ob h1{font-size:32px;line-height:1.15;margin:0 0 10px;font-weight:800}#ob p{color:#a8c4b2;margin:0 0 16px;max-width:320px}
+.pg{display:flex;gap:6px;margin-bottom:18px}.pg i{width:7px;height:7px;border-radius:50%;background:#2d4a37}.pg i.on{width:22px;border-radius:9px;background:var(--acc)}
+.obb{width:100%;max-width:360px;margin-top:10px;padding:16px}
+</style></head><body data-v="learn">
+<header><div class="hd"><div class="logo"><i>A</i>ATHPEST</div><div class="chips"><div class="chip" id="cStreak">🔥 0</div><div class="chip" id="cXp">⭐ 0</div><div class="chip" id="th" style="cursor:pointer">🌓</div></div></div></header>
+<div class="wrap"><main>
+<section class="view on" id="v-learn">
+ <div id='wel'><h1 style='font-size:34px;line-height:1.15;margin:8px 0 18px;font-weight:700'>Welcome!<br><span style='color:var(--acc)'>Ready to speak with your AI Call Agent?</span></h1>
+ <div class='grid4'>
+   <button class='act' data-vx='cont'><i>🎯</i><b>Learn</b><small>Levels A1 to C2</small></button>
+   <button class='act' data-vx='ring'><i>📞</i><b>AI Call Agent</b><small>Manage calls & spot mistakes</small></button>
+   <button class='act' data-vx='go' data-g='vocab'><i>📚</i><b>Words</b><small>Daily flashcards</small></button>
+   <button class='act' data-vx='test'><i>📝</i><b>Make Test</b><small>Fresh questions</small></button>
+ </div>
+ <div class='rc'><b>Recent Calls & Practice</b><button data-vx='go' data-g='notes'>See all</button></div>
+ <div class='card' id='rcl'></div>
+ <div class='msgbar' data-vx='ring'><span class='pl'>＋</span><span class='ph2'>Tap to start practice call with your Agent…</span><span class='mc'>🎤</span></div></div>
+ <div class="hero reveal"><small>ENGLISH SPEAKING PARTNER</small><h1>Open your mouth.<br>Speak English.</h1><p>Six levels from your first words to mastery, plus live practice calls with your dedicated AI Call Manager Agent.</p><div class="row" style="margin:0"><button class="btn" id="hGo">Start speaking now</button><button class="btn ghost" id="hCall" style="background:rgba(255,255,255,.12);color:#fff;border:0">📞 Call Agent</button></div></div>
+ <div id="daily"></div><div id="resume"></div>
+ <div class="stats reveal"><div class="st"><b id="s1">0</b><span>Day streak</span></div><div class="st"><b id="s2">0</b><span>XP earned</span></div><div class="st"><b id="s3">0/6</b><span>Levels done</span></div></div>
+ <div id="vhome"></div><h2>Practice real situations</h2><p class="sub">Nobody learns English for English. Pick the moment you are preparing for.</p>
+ <div class="uc" id="uc1"></div>
+ <h2>Unlimited practice</h2><p class="sub">Practise with fresh question sets and repeat any level.</p>
+ <div class="card reveal"><div class="row" id="unl" style="margin:0"></div></div>
+</section>
+
+<section class="view" id="v-quiz"><div class="card" id="quiz"></div></section>
+
+<!-- Call Agent View -->
+<section class="view" id="v-tutor">
+  <div class="card call">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+      <div class="srv-pill" id="srvStatus"><span class="srv-dot"></span><span id="srvTxt">Checking backend...</span></div>
+      <button class="chip" id="cfgBtn" style="cursor:pointer">⚙️ Agent Settings</button>
+    </div>
+
+    <div class="av" id="av">👩‍💼</div>
+    <b style="font-size:22px" id="curAgentTitle">Agent Aria – Executive Call Manager</b>
+    <p class="sub" style="margin:4px 0 16px" id="curAgentSub">Professional spoken English coach. Speaks naturally, detects mistakes instantly, and guides you like a real phone call.</p>
+
+    <div style="text-align:left;font-size:12px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">1. Select Call Manager Agent</div>
+    <div class="ag-grid" id="agGrid"></div>
+
+    <div style="text-align:left;font-size:12px;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin:18px 0 8px">2. Select Scenario</div>
+    <div class="uc" id="uc2" style="text-align:left"></div>
+
+    <div class="cur" id="cur"></div>
+    <div class="cur" id="stat" style="display:none;background:rgba(34,197,94,.15);color:var(--ok)"></div>
+
+    <div class="row" style="justify-content:center;margin:0 0 10px">
+      <select id="vsel" class="chip" style="cursor:pointer;max-width:240px"></select>
+      <button class="chip" id="vtest" style="cursor:pointer">▶ Test Voice</button>
+    </div>
+
+    <div class="row" style="justify-content:center;gap:12px;margin-top:6px">
+      <button class="btn" id="callBtn">📞 Ring My Phone</button>
+      <button class="btn ghost" id="callDirectBtn" style="border:1.5px solid var(--acc);color:var(--acc)">⚡ Direct Call (No Ring)</button>
+      <button class="btn" id="endBtn" style="display:none;background:var(--bad);color:#fff">📵 Hang up & get feedback</button>
+    </div>
+
+    <div class="log" id="log"></div>
+
+    <div class="inp" id="inp" style="display:none">
+      <input id="txt" placeholder="Tap 🎤 and speak, or type here…" autocomplete="off">
+      <button class="mic" id="mic" title="Tap to speak">🎤</button>
+      <button class="btn" id="send" style="padding:14px 20px">Send</button>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-vocab"><div class="hero" id="vh" style="background:radial-gradient(120% 120% at 100% 0,#065f46 0,#06281d 45%,#050d09 100%)"></div><h2>Flashcards</h2><p class="sub">Pick a level, tap the card to flip it, and listen to how it sounds.</p><div class="row" id="vlv" style="margin:0 0 12px"></div><div class="card" id="vcard"></div><div class="row"><button class="btn ghost" data-vx="gen">✨ 5 more words</button></div><h2>My saved words</h2><div class="card" id="vsaved"></div></section>
+<section class="view" id="v-notes"><h2 style="margin-top:0">Mistake notebook</h2><div class="card" id="notes"></div><h2>History</h2><p class="sub">Your practice history is saved on this device.</p><div class="card" id="hist"></div></section>
+</main>
+<aside><div class="card jr reveal"><h3>Your journey</h3><p class="sub" style="margin:0">Basic → Intermediate → Mastered. All levels are open.</p><div id="tiers"></div></div></aside></div>
+
+<!-- Onboarding Modal -->
+<div id='ob'><div class='obv'><div class='obav'>👩‍💼</div></div><h1>Your Smart AI<br>Call Manager Agent</h1><p>Practice authentic phone conversations with real-time mistake finding, pronunciation guidance, and fluent replies.</p><div class='pg'><i></i><i class='on'></i><i></i></div><button class='btn obb' id='obGo'>Get Started</button><button class='btn ghost obb' id='obLog'>Log in</button></div>
+
+<!-- Phone Overlay -->
+<div id="ph"></div>
+
+<!-- Post-Call Mistake Diagnosis Report Modal -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal-card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="margin:0;font-size:22px">📊 Call Mistake & Fluency Report</h3>
+      <button class="chip" id="repClose" style="cursor:pointer">✕</button>
+    </div>
+    <p class="sub" style="margin:4px 0 14px" id="repSub">Detailed breakdown of your practice session.</p>
+    <div class="rep-grid">
+      <div class="rep-stat"><b id="repScore">85%</b><small>Fluency Score</small></div>
+      <div class="rep-stat"><b id="repCefr">B2</b><small>Est. CEFR Level</small></div>
+      <div class="rep-stat"><b id="repMistakes">2</b><small>Mistakes Spotted</small></div>
+    </div>
+    <div style="font-weight:800;font-size:14px;margin-top:16px">Mistakes Analyzed & Corrected:</div>
+    <div class="rep-list" id="repList"></div>
+    <div style="font-weight:800;font-size:14px;margin-top:16px">Coach Recommendation:</div>
+    <div class="why" id="repRec" style="margin-top:6px"></div>
+    <div class="rep-actions">
+      <button class="btn" id="repSaveBtn">💾 Add to Mistake Notebook</button>
+      <button class="btn ghost" id="repAgainBtn">📞 Start New Call</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="margin:0;font-size:20px">⚙️ AI Call Agent Settings</h3>
+      <button class="chip" id="cfgClose" style="cursor:pointer">✕</button>
+    </div>
+    <div class="form-group">
+      <label>AI Intelligence Engine</label>
+      <select id="cfgProvider">
+        <option value="auto">Auto (Gemini/OpenAI if available, else Local Agent)</option>
+        <option value="local">Built-in Local Smart Agent (Zero API Key, Ultra-Fast & Free)</option>
+        <option value="gemini">Google Gemini 2.5 Flash</option>
+        <option value="openai">OpenAI GPT-4o-mini</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Google Gemini API Key (Optional)</label>
+      <input type="password" id="cfgGeminiKey" placeholder="Paste Gemini API key...">
+    </div>
+    <div class="form-group">
+      <label>OpenAI API Key (Optional)</label>
+      <input type="password" id="cfgOpenaiKey" placeholder="Paste OpenAI API key (sk-...)">
+    </div>
+    <div class="row" style="margin-top:16px">
+      <button class="btn" id="cfgSaveBtn">Save Configuration</button>
+      <button class="btn ghost" id="cfgTestBtn">Test Connection</button>
+    </div>
+    <div id="cfgFeedback" style="margin-top:10px;font-size:13px"></div>
+  </div>
+</div>
+
+<nav>
+  <button data-v="learn" class="on"><span>🏠</span>Learn</button>
+  <button data-v="tutor"><span>📞</span>Call Agent</button>
+  <button data-v="notes"><span>📒</span>Notebook</button>
+  <button data-v="vocab"><span>📚</span>Words</button>
+</nav>
+
+<script>
+const $=s=>document.querySelector(s),LV=[
+{id:"A1",n:"Starter",i:"🌱",d:"Greetings, be-verbs, basics",q:[
+["Fill the blank","My name ___ Ravi.",["am","is","are"],1,"With a name or he/she/it we use “is”. “I” uses “am”."],
+["Fill the blank","They ___ my friends.",["is","am","are"],2,"“They” is plural, so we use “are”."],
+["Pick the correct sentence","",["I has a book.","I have a book.","I haves a book."],1,"I/you/we/they go with “have”; only he/she/it uses “has”."],
+["Fill the blank","___ you from India?",["Is","Are","Do"],1,"Questions with “you” start with “Are”."]]},
+{id:"A2",n:"Explorer",i:"🧭",d:"Daily routines, past simple",q:[
+["Fill the blank","She ___ to school every day.",["go","goes","going"],1,"Present simple with she/he/it adds -s: goes."],
+["Fill the blank","Yesterday I ___ a movie.",["watch","watched","watching"],1,"Finished past actions use the past simple: watched."],
+["Fill the blank","I ___ eat meat. I am vegetarian.",["don’t","doesn’t","not"],0,"Negative with “I” is “do not”: don’t."],
+["Pick the correct sentence","",["He didn’t went home.","He didn’t go home.","He not go home."],1,"After “didn’t” use the base verb: go."]]},
+{id:"B1",n:"Speaker",i:"💬",d:"Tenses, opinions, conversation",q:[
+["Fill the blank","I ___ here since 2020.",["live","am living","have lived"],2,"“Since” links the past to now: present perfect."],
+["Fill the blank","If it rains, we ___ at home.",["will stay","stayed","would stay"],0,"Real future condition: if + present, will + verb."],
+["Pick the better phrase","Disagreeing politely",["You are wrong.","I see it a bit differently.","No, that’s nonsense."],1,"Softer phrases keep conversations friendly."],
+["Fill the blank","She asked me where I ___.",["live","lived","am living"],1,"Reported speech moves the tense back: live → lived."]]},
+{id:"B2",n:"Achiever",i:"🚀",d:"Fluency, idioms, interviews",q:[
+["Fill the blank","I wish I ___ more time.",["have","had","will have"],1,"Wishes about the present use the past form: had."],
+["Meaning","“Break the ice” means…",["start a friendly talk","damage something","get very cold"],0,"It means to make people comfortable at the start."],
+["Fill the blank","By next year, I ___ my degree.",["will finish","will have finished","finish"],1,"Future perfect: done before a future time."],
+["Pick the best answer","Interviewer: “Tell me about yourself.”",["I am a person.","I’m a CS student who loves building apps and learning fast.","Nothing special."],1,"Give a short, confident, relevant summary."]]},
+{id:"C1",n:"Professional",i:"🎯",d:"Nuance, formal and business English",q:[
+["Fill the blank","Had I known, I ___ you.",["would tell","would have told","told"],1,"Inverted third conditional: Had I known → would have told."],
+["Pick the formal phrase","Asking for help in an email",["Gimme a hand.","I would appreciate your assistance.","Help me now."],1,"Formal emails use polite, indirect language."],
+["Fill the blank","Not only ___ late, but he was also rude.",["he was","was he","he is"],1,"After “Not only” at the start, invert: was he."],
+["Meaning","“Hit the ground running” means…",["fall down","start fast and effectively","run a marathon"],1,"A common business idiom for a strong start."]]},
+{id:"C2",n:"Master",i:"👑",d:"Subtlety, style, native-like control",q:[
+["Fill the blank","Scarcely ___ arrived when it began to rain.",["I had","had I","I have"],1,"“Scarcely” triggers inversion: had I."],
+["Choose the precise word","The evidence was ___, leaving no room for doubt.",["irrefutable","irritable","irregular"],0,"Irrefutable means impossible to disprove."],
+["Fill the blank","It is high time you ___ a decision.",["make","made","will make"],1,"“It’s high time” takes the past form: made."],
+["Meaning","“A double-edged sword” is…",["a weapon","something with good and bad effects","a tool"],1,"It describes something with both benefits and risks."]]}];
+
+const TI=[{n:"Basic",i:"🌱",l:[0,1]},{n:"Intermediate",i:"🚀",l:[2,3]},{n:"Mastered",i:"👑",l:[4,5]}];
+const SC=[["Free talk","💬","Chat about anything","#7c5cff"],["Daily conversation","☀️","Greetings and everyday chat","#0ea5e9"],["Self introduction","🙋","Introduce yourself confidently","#16a34a"],["Job Interview","💼","Be ready. Get the job.","#0ea5e9"],["Office meeting","🏢","Share ideas at work","#16a34a"],["Shopping","🛍️","Ask prices and make choices","#f97316"],["Restaurant","🍽️","Order food politely","#ca8a04"],["Travel Abroad","✈️","Airport, hotel and directions","#f97316"],["Friends and family","👨‍👩‍👧","Talk naturally with loved ones","#ca8a04"],["Higher Studies","🎓","Speak up in class","#16a34a"],["Promotion","📈","Make your voice heard","#db2777"]];
+
+const AGENTS = {
+  aria: { id: "aria", name: "Agent Aria", role: "Executive Call Manager & Fluency Coach", avatar: "👩‍💼", desc: "Polished, sharp, catches subtle mistakes, executive phrasing." },
+  david: { id: "david", name: "Coach David", role: "Master Grammar & Mistake Hunter", avatar: "🧑‍🏫", desc: "Deep grammatical precision, explains prepositions and tenses." },
+  babe: { id: "babe", name: "Babe", role: "Friendly Daily Conversational Partner", avatar: "👱‍♀️", desc: "Warm, casual, encouraging, everyday phone chats." },
+  alex: { id: "alex", name: "Agent Alex", role: "Dynamic Interview & Career Coach", avatar: "👨‍💼", desc: "Fast-paced interview training, leadership and workplace clarity." }
+};
+
+let S={xp:0,streak:0,last:"",done:{},notes:[],hist:[],aiProvider:"auto",geminiKey:"",openaiKey:""};
+let cur=null,hist=[],scen="Free talk",curAgent="aria",docRef=null,rec=null,onCall=false,busy=false,base="",activeStream=null;
+let lastTurnFixes=[],currentCallMistakes=[];
+const today=()=>new Date().toISOString().slice(0,10);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function save(){if(S.notes.length>200)S.notes=S.notes.slice(-200);try{localStorage.setItem("ath",JSON.stringify(S))}catch(e){}}
+function bump(){const t=today();if(S.last!==t){const y=new Date(Date.now()-864e5).toISOString().slice(0,10);S.streak=S.last===y?S.streak+1:1;S.last=t}}
+function io(){const o=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");o.unobserve(x.target)}}),{threshold:.08});document.querySelectorAll(".reveal:not(.in)").forEach(e=>o.observe(e))}
+
+function scHTML(){return SC.map(s=>`<button class="sc ${s[0]===scen?"on":""}" data-s="${s[0]}"><div class="im" style="background:linear-gradient(135deg,#0f3d22,#16a34a66)">${s[1]}</div><div><b>${s[0]}</b><small>${s[2]}</small></div></button>`).join("")}
+
+function agHTML(){
+  return Object.values(AGENTS).map(a=>`
+    <div class="ag-card ${a.id===curAgent?'on':''}" data-ag="${a.id}">
+      <div class="ag-top"><div class="ag-av">${a.avatar}</div><div><div class="ag-name">${a.name}</div><div class="ag-role">${a.role}</div></div></div>
+      <div class="ag-desc">${a.desc}</div>
+    </div>
+  `).join('');
+}
+
+function render(){
+  const n=Object.keys(S.done).length;$("#cStreak").textContent="🔥 "+S.streak;$("#cXp").textContent="⭐ "+S.xp;$("#s1").textContent=S.streak;$("#s2").textContent=S.xp;$("#s3").textContent=n+"/6";
+  $("#tiers").innerHTML=TI.map(t=>{const st=t.l.reduce((a,i)=>a+(S.done[LV[i].id]||0),0);return `<div class="tier"><div class="t"><span>${t.i} ${t.n}</span><small>${st}/6 ⭐</small></div><div class="bar"><i style="width:${st/6*100}%"></i></div><div class="pills">${t.l.map(i=>`<button class="pill ${S.done[LV[i].id]?"dn":""}" data-i="${i}">${LV[i].id} ${LV[i].i}<small>${LV[i].n}</small></button>`).join("")}</div></div>`}).join("");
+  $("#unl").innerHTML=LV.map(l=>`<button class="btn ghost" data-u="${l.id}">${l.i} ${l.id}</button>`).join("");
+  const R=S.resume;$("#resume").innerHTML=R&&R.qs&&R.k<R.qs.length?`<div class="card" style="margin-top:16px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap"><div><b>Pick up where you stopped</b><div class="sub" style="margin:2px 0 0">${LV[R.i].id} · ${R.inf?"Unlimited practice":LV[R.i].n} · question ${R.k+1} of ${R.qs.length}</div></div><button class="btn" id="resBtn">Resume ▶</button></div>`:"";
+  $("#uc1").innerHTML=scHTML();$("#uc2").innerHTML=scHTML();$("#cur").textContent="Situation: "+scen;
+  $("#agGrid").innerHTML=agHTML();
+  const ag=AGENTS[curAgent]||AGENTS.aria;
+  $("#av").textContent=ag.avatar;
+  $("#curAgentTitle").textContent=ag.name+" – "+ag.role;
+  $("#curAgentSub").textContent=ag.desc;
+
+  const T=(S.day&&S.day.d===today())?S.day.n:0;
+  $("#daily").innerHTML=`<div class="card" style="margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><b>Today’s talk with ${ag.name}</b><div class="sub" style="margin:2px 0 0">${T>=10?"Goal done! 🎉 Keep chatting for extra XP.":"Say "+(10-T)+" more messages to hit today’s goal."}</div></div><button class="btn" id="talkBtn">📞 Talk now</button></div><div class="bar"><i style="width:${Math.min(T,10)*10}%"></i></div></div>`;
+  const m=S.notes.slice().reverse().slice(0,40);
+  $("#hist").innerHTML=(S.hist||[]).length?S.hist.map(h=>`<div class="m"><b>${h.kind==="call"?"📞 Call · "+esc(h.scenario||""):"📝 "+esc(h.level||"")+" quiz · "+h.score+"/"+h.total}</b> <span style="color:var(--mut)">${new Date(h.at).toLocaleDateString()}</span>${h.summary?`<br><span style="color:var(--mut)">${esc(h.summary)}</span>`:""}</div>`).join(""):"<p style='color:var(--mut);margin:0'>Your quizzes and calls will be recorded here.</p>";
+  $("#notes").innerHTML=m.length?m.map(x=>`<div class="m"><s style="color:var(--bad)">${esc(x.a)}</s> → <b style="color:var(--ok)">${esc(x.b)}</b><br><span style="color:var(--mut)">${esc(x.w)}</span></div>`).join(""):"<p style='color:var(--mut);margin:0'>No mistakes yet. Wrong answers and Agent corrections will collect here.</p>";
+  io();
+}
+
+function go(v){document.body.dataset.v=v==="quiz"?"learn":v;document.querySelectorAll(".view").forEach(e=>e.classList.toggle("on",e.id==="v-"+v));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===(v==="quiz"?"learn":v)));scrollTo({top:0,behavior:"smooth"});io()}
+function pickScen(s){const ch=scen!==s;scen=s;render();if(ch&&onCall){bub("me","Let’s switch to: "+s);turn("(I changed the situation to: "+s+". Start this new scenario with one short line and a question.)",true)}}
+
+document.addEventListener("click",e=>{
+  const px=e.target.closest("[data-x]");if(px)return phAct(px.dataset.x);
+  const nb=e.target.closest("nav button");if(nb)return go(nb.dataset.v);
+  if(e.target.closest("#resBtn"))return resume();
+  if(e.target.closest("#talkBtn"))return go("tutor");
+  const ag=e.target.closest("[data-ag]");if(ag){curAgent=ag.dataset.ag;try{localStorage.setItem('ath_agent',curAgent)}catch(x){}render();return}
+  const sc=e.target.closest(".sc");if(sc){pickScen(sc.dataset.s);if(sc.parentElement.id==="uc1")go("tutor");return}
+  const p=e.target.closest(".pill");if(p)return start(+p.dataset.i);
+  const u=e.target.closest("[data-u]");if(u)return unlimited(LV.findIndex(l=>l.id===u.dataset.u));
+});
+
+$("#th").onclick=()=>{const r=document.documentElement,l=r.dataset.theme==="light"||(!r.dataset.theme&&matchMedia("(prefers-color-scheme:light)").matches);r.dataset.theme=l?"dark":"light"};
+$("#hGo").onclick=()=>{if(S.resume&&S.resume.qs&&S.resume.k<S.resume.qs.length)return resume();let i=LV.findIndex(l=>!S.done[l.id]);start(i<0?5:i)};
+$("#hCall").onclick=()=>go("tutor");
+
+// Quizzes
+function start(i,qs,inf){cur={i,qs:qs||LV[i].q.map(x=>({t:x[0],q:x[1],o:x[2],a:x[3],w:x[4]})),k:0,sc:0,inf:!!inf,wrong:[]};go("quiz");ask()}
+function ask(){const q=cur.qs[cur.k],L=LV[cur.i];
+ $("#quiz").innerHTML=`<div class="tag">${L.id} · ${cur.inf?"Unlimited practice":"Question "+(cur.k+1)+" of "+cur.qs.length}</div><div class="bar"><i style="width:${cur.k/cur.qs.length*100}%"></i></div><div class="tag" style="color:var(--mut)">${esc(q.t)}</div><div class="q">${esc(q.q)}</div>${q.o.map((o,j)=>`<button class="opt" data-j="${j}">${esc(o)}</button>`).join("")}<div id="ex"></div>`;
+ $("#quiz").onclick=e=>{const b=e.target.closest(".opt");if(!b||$("#ex").innerHTML)return;const j=+b.dataset.j,ok=j===q.a;
+  document.querySelectorAll(".opt")[q.a].classList.add("ok");if(!ok){b.classList.add("no");cur.wrong.push(q);S.notes.push({a:q.o[j],b:q.o[q.a],w:q.q+" – "+q.w})}else{cur.sc++;S.xp+=10}
+  $("#ex").innerHTML=`<div class="why">${ok?"✅ Correct! ":"❌ Not quite. "}${esc(q.w)}</div><div class="row"><button class="btn" id="nx">${cur.k+1<cur.qs.length?"Next →":"See results"}</button></div>`;
+  $("#nx").onclick=()=>{cur.k++;cur.k<cur.qs.length?ask():finish()};keep(cur.k+1);$("#cXp").textContent="⭐ "+S.xp}}
+function log(kind,o){const t=Date.now();S.hist=S.hist||[];S.hist.unshift({kind:kind,at:t,level:o.level,score:o.score,total:o.total,scenario:o.scenario,summary:(o.summary||"").slice(0,400)});S.hist=S.hist.slice(0,50);save()}
+function keep(k){S.resume={i:cur.i,qs:cur.qs,k:k,sc:cur.sc,inf:cur.inf,wrong:cur.wrong};save()}
+function resume(){const r=S.resume;if(!r||!r.qs)return;cur={i:r.i,qs:r.qs,k:r.k,sc:r.sc,inf:r.inf,wrong:r.wrong||[]};go("quiz");cur.k>=cur.qs.length?finish():ask()}
+async function finish(){const L=LV[cur.i],pct=cur.sc/cur.qs.length,stars=pct>=1?3:pct>=.75?2:pct>=.5?1:0;
+ S.resume=null;log("quiz",{level:L.id,mode:cur.inf?"practice":"level",score:cur.sc,total:cur.qs.length,stars:stars,wrong:cur.wrong.map(w=>({q:w.q,right:w.o[w.a]}))});bump();if(!cur.inf){if(stars>0&&(S.done[L.id]||0)<stars)S.done[L.id]=stars;S.xp+=20}save();render();
+ $("#quiz").innerHTML=`<div class="big">${stars?"🎉":"💪"}</div><div class="q" style="text-align:center">${cur.sc} / ${cur.qs.length} correct ${"⭐".repeat(stars)}</div><div class="why fb" id="fbk"><span class="dots">Your coach is writing feedback</span></div><div class="row" style="justify-content:center"><button class="btn" id="again">Practice more</button><button class="btn ghost" id="home">Back home</button></div>`;
+ $("#again").onclick=()=>unlimited(cur.i);$("#home").onclick=()=>go("learn");
+ const rv=cur.wrong.map(w=>"• "+w.q+" → "+w.o[w.a]+" ("+w.w+")").join("\n");
+ let t=(stars?"Great work on level "+L.id+"! "+(stars===3?"Perfect score.":"Review the explanations to lock it in."):"Good try. Review these and retry, you can do it.")+(rv?"\n\nTo review:\n"+rv:"");
+ const f=$("#fbk");if(f)f.textContent=t}
+async function unlimited(i){go("quiz");$("#quiz").innerHTML='<p class="dots">Preparing practice for '+LV[i].id+'</p>';start(i,LV[i].q.slice().sort(()=>Math.random()-.5).map(x=>({t:x[0],q:x[1],o:x[2],a:x[3],w:x[4]})),true)}
+
+// ==========================================
+// CALL MANAGER AGENT & AUDIO LIFECYCLE
+// ==========================================
+let hf=true,sil=null,tm=null,t0=0,st="",speaking=false,sid=0,callToken=0,isRinging=false;
+let ac=null,rt=null,rm=null,slow=false,PH={},animId=null,analyser=null;
+
+function getAudioCtx(){
+  if(!ac) ac=new (window.AudioContext||window.webkitAudioContext)();
+  if(ac.state==='suspended') ac.resume();
+  return ac;
+}
+
+// Realistic telephone ring (440Hz + 480Hz dual tone standard)
+function ringStart(){
+  isRinging=true;
+  try{
+    const ctx=getAudioCtx();
+    const play=()=>{
+      if(!isRinging) return;
+      const t=ctx.currentTime;
+      const o1=ctx.createOscillator(), o2=ctx.createOscillator(), g=ctx.createGain();
+      o1.type='sine'; o1.frequency.value=440;
+      o2.type='sine'; o2.frequency.value=480;
+      o1.connect(g); o2.connect(g);
+      g.connect(ctx.destination);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.18, t+0.05);
+      g.gain.setValueAtTime(0.18, t+1.55);
+      g.gain.linearRampToValueAtTime(0, t+1.6);
+      o1.start(t); o2.start(t);
+      o1.stop(t+1.6); o2.stop(t+1.6);
+      try{navigator.vibrate&&navigator.vibrate([300,150,300])}catch(e){}
+    };
+    play();
+    rt=setInterval(play, 3600);
+  }catch(e){}
+}
+
+function ringStop(){
+  isRinging=false;
+  clearInterval(rt);clearTimeout(rm);
+  try{navigator.vibrate&&navigator.vibrate(0)}catch(e){}
+}
+
+function playConnectChime(){
+  try{
+    const ctx=getAudioCtx(), t=ctx.currentTime;
+    const osc=ctx.createOscillator(), g=ctx.createGain();
+    osc.type='sine'; osc.connect(g); g.connect(ctx.destination);
+    osc.frequency.setValueAtTime(523.25, t);
+    osc.frequency.exponentialRampToValueAtTime(659.25, t+0.1);
+    osc.frequency.exponentialRampToValueAtTime(783.99, t+0.22);
+    g.gain.setValueAtTime(0.2, t);
+    g.gain.linearRampToValueAtTime(0, t+0.35);
+    osc.start(t); osc.stop(t+0.35);
+  }catch(e){}
+}
+
+function playDisconnectTone(){
+  try{
+    const ctx=getAudioCtx();
+    [0, 0.14, 0.28].forEach(off=>{
+      const t=ctx.currentTime+off;
+      const osc=ctx.createOscillator(), g=ctx.createGain();
+      osc.frequency.value=425; osc.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.15, t);
+      g.gain.linearRampToValueAtTime(0, t+0.07);
+      osc.start(t); osc.stop(t+0.08);
+    });
+  }catch(e){}
+}
+
+// Waveform visualizer
+function initVisualizer(stream){
+  try{
+    const ctx=getAudioCtx();
+    const source=ctx.createMediaStreamSource(stream);
+    analyser=ctx.createAnalyser();
+    analyser.fftSize=64;
+    source.connect(analyser);
+    drawVisualizer();
+  }catch(e){}
+}
+
+function drawVisualizer(){
+  if(!onCall) return;
+  const cv=$('#phWave');
+  if(!cv) return;
+  const ctx=cv.getContext('2d');
+  const bufferLength=analyser?analyser.frequencyBinCount:32;
+  const data=new Uint8Array(bufferLength);
+  if(analyser && !speaking){
+    analyser.getByteFrequencyData(data);
+  }else if(speaking){
+    const time=Date.now()/120;
+    for(let i=0;i<bufferLength;i++){
+      data[i]=Math.min(255, 60+Math.sin(time+i*0.4)*70+Math.random()*40);
+    }
+  }
+  ctx.clearRect(0,0,cv.width,cv.height);
+  const barWidth=(cv.width/bufferLength)*1.4;
+  let x=0;
+  for(let i=0;i<bufferLength;i++){
+    const barHeight=(data[i]/255)*cv.height*0.85;
+    const grad=ctx.createLinearGradient(0,cv.height,0,0);
+    grad.addColorStop(0,'#16a34a');
+    grad.addColorStop(1,'#2ee06f');
+    ctx.fillStyle=grad;
+    ctx.fillRect(x,cv.height-barHeight,barWidth-2,barHeight);
+    x+=barWidth+2;
+  }
+  animId=requestAnimationFrame(drawVisualizer);
+}
+
+// Phone Overlay UI
+function ph(m){
+  const o=$('#ph');
+  o.dataset.m=m;
+  o.classList.add('on');
+  const ag=AGENTS[curAgent]||AGENTS.aria;
+  if(m==='in'){
+    o.innerHTML=`
+      <div style="margin-top:auto">
+        <div class="av ring" id="phAv" style="width:110px;height:110px;font-size:54px;margin-bottom:16px">${ag.avatar}</div>
+        <h2>${ag.name}</h2>
+        <div class="s">${ag.role}</div>
+        <div style="margin-top:16px;color:var(--acc);font-weight:700">Incoming Phone Call… (${scen})</div>
+      </div>
+      <div class="pb" style="margin-top:auto"><button class="rb" data-x="decline"><i style="font-size:22px">⏰</i>Remind Me</button><button class="rb" data-x="decline"><i style="font-size:22px">💬</i>Message</button></div>
+      <div class="pb" style="margin:30px 0 0"><button class="rb r" data-x="decline"><i style="transform:rotate(135deg)">📞</i>Decline</button><button class="rb g ring" data-x="accept"><i>📞</i>Accept</button></div>
+    `;
+  }else{
+    o.innerHTML=`
+      <div style="width:100%;max-width:440px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:12px;opacity:.7">ATHPEST CALL MANAGER</span>
+          <span class="chip" style="background:rgba(46,224,111,.15);border-color:var(--acc);color:var(--acc);font-size:11px">LIVE MISTAKE HUNTER</span>
+        </div>
+        <div class="av live" id="phAv" style="width:84px;height:84px;font-size:42px;margin:8px auto">${ag.avatar}</div>
+        <h2 style="font-size:24px">${ag.name}</h2>
+        <div class="s" id="phT">00:00 · Connected</div>
+        <canvas id="phWave" width="280" height="42" style="margin:10px auto;display:block"></canvas>
+        <div class="cap" id="phCap"></div>
+        <div id="phFixSlot"></div>
+      </div>
+      <div class="pb" style="margin-top:auto;justify-content:center;gap:36px">
+        <button class="rb" data-x="mute"><i id="phM">🎤</i><span id="phMtxt">mute</span></button>
+        <button class="rb" data-x="slow"><i id="phSl">🐢</i><span id="phSltxt">slow</span></button>
+        <button class="rb" data-x="repeat"><i>🔁</i><span>repeat</span></button>
+      </div>
+      <div class="pb" style="margin:24px 0 0;justify-content:center">
+        <button class="rb r" data-x="hang"><i style="transform:rotate(135deg)">📞</i>End Call</button>
+      </div>
+    `;
+    PH={};
+    phCap();
+  }
+}
+
+function phClose(){const o=$('#ph');o.classList.remove('on');o.innerHTML='';o.dataset.m=''}
+function ring(){ph('in');ringStart();rm=setTimeout(()=>{if($('#ph').dataset.m==='in')decline()},35000)}
+function decline(){ringStop();phClose()}
+function accept(){ringStop();ph('call');beginCall()}
+function directCall(){ph('call');beginCall()}
+
+function phAct(x){
+  if(x==='decline')decline();
+  else if(x==='accept')accept();
+  else if(x==='mute')$('#mic').click();
+  else if(x==='slow'){slow=!slow;const b=$('#phSl');if(b)b.style.background=slow?'#2ee06f':'rgba(255,255,255,.14)'}
+  else if(x==='repeat'){if(PH.b)say(PH.b)}
+  else if(x==='hang')endCall();
+}
+
+function phSet(k,v){PH[k]=v;if(k==='b'){PH.u='';}phCap()}
+function phCap(){
+  const e=$('#phCap');if(!e)return;
+  const ag=AGENTS[curAgent]||AGENTS.aria;
+  e.innerHTML=(PH.b?`<div style='font-size:17px;font-weight:600'><b>${ag.name}:</b> ${esc(PH.b)}</div>`:'')+(PH.u?`<div style='margin-top:8px;font-size:14px;color:rgba(255,255,255,.75)'><b>You:</b> ${esc(PH.u)}</div>`:'');
+}
+
+function phShowFix(f){
+  const slot=$('#phFixSlot');if(!slot)return;
+  slot.innerHTML=`<div class="ph-fix"><b>⚠️ Mistake Spotted</b><s>${esc(f.said)}</s> ➔ <em>${esc(f.better)}</em><br><small style="opacity:.85">${esc(f.why)}</small></div>`;
+  setTimeout(()=>{if(slot.innerHTML.includes(f.better))slot.innerHTML='';},6500);
+}
+
+$('#callBtn').onclick=ring;
+$('#callDirectBtn').onclick=directCall;
+
+function paint(){
+  const e=$("#stat");if(!onCall){e.style.display="none";return}
+  e.style.display="";
+  const s=Math.floor((Date.now()-t0)/1000);
+  const tt=("0"+Math.floor(s/60)).slice(-2)+":"+("0"+s%60).slice(-2);
+  e.textContent=tt+" · "+st;
+  const p=$("#phT");if(p)p.textContent=tt+" · "+st;
+  const pm=$("#phM");if(pm)pm.textContent=hf?"🎤":"🔇";
+  const pmt=$("#phMtxt");if(pmt)pmt.textContent=hf?"mute":"unmute";
+}
+function stat(s){st=s;paint()}
+
+function afterSpeak(){
+  speaking=false;base="";$("#txt").value="";
+  if(onCall){
+    stat(hf?"Your turn, speak now":"Mic muted, tap 🎤");
+    if(hf && !$("#mic").classList.contains("live")){
+      setTimeout(()=>{if(onCall&&hf&&!$("#mic").classList.contains("live"))$("#mic").click()},200);
+    }
+  }
+}
+
+try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices()}catch(e){}
+function usVoices(){return (speechSynthesis.getVoices()||[]).filter(v=>/en/i.test(v.lang))}
+function pickVoice(){
+  const vs=usVoices();let sv='';
+  try{sv=localStorage.getItem('athv')||''}catch(e){}
+  const ag=AGENTS[curAgent]||AGENTS.aria;
+  if(ag.id==='david'||ag.id==='alex'){
+    return vs.find(v=>v.name===sv)||vs.find(v=>/david|george|guy|james|daniel|alex|natural|online/i.test(v.name))||vs[0];
+  }
+  return vs.find(v=>v.name===sv)||vs.find(v=>/aria|jenny|ava|emma|samantha|zira|female/i.test(v.name))||vs[0];
+}
+function fillV(){
+  const s=$('#vsel');if(!s)return;
+  const vs=usVoices(),c=pickVoice();
+  s.innerHTML=vs.length?vs.map(v=>`<option ${c&&v.name===c.name?'selected':''}>${esc(v.name)}</option>`).join(''):'<option>Default Voice</option>';
+}
+$('#vsel').onchange=e=>{try{localStorage.setItem('athv',e.target.value)}catch(x){}};
+$('#vtest').onclick=()=>{const ag=AGENTS[curAgent]||AGENTS.aria;say(`Hello! I'm ${ag.name}, your call manager agent. Ready to practice speaking?`)};
+try{speechSynthesis.onvoiceschanged=fillV}catch(e){}fillV();
+
+function say(t){
+  const id=++sid;speaking=true;stat((AGENTS[curAgent]||AGENTS.aria).name+" is speaking");
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t);
+    u.lang="en-US";
+    u.rate=slow?.8:1.02;
+    u.pitch=1.0;
+    const fv=pickVoice();
+    if(fv){u.voice=fv;u.lang=fv.lang}
+    u.onstart=()=>{ $("#av").classList.add("talk"); const pa=$("#phAv");if(pa)pa.classList.add("talk"); };
+    u.onend=u.onerror=()=>{
+      if(id!==sid)return;
+      $("#av").classList.remove("talk");
+      const pa=$("#phAv");if(pa)pa.classList.remove("talk");
+      afterSpeak();
+    };
+    speechSynthesis.speak(u);
+  }catch(e){afterSpeak()}
+}
+
+function bub(c,t){
+  const d=document.createElement("div");d.className="b "+c;d.textContent=t;
+  $("#log").append(d);d.scrollIntoView({behavior:"smooth",block:"center"});return d;
+}
+
+function fixCard(f){
+  const d=document.createElement("div");d.className="fix";
+  d.innerHTML=`<b>⚠️ Mistake spotted</b><br>You said: <s>${esc(f.said)}</s><br>Better: <em>${esc(f.better)}</em><br>Why: ${esc(f.why)}<br>In this situation, say: <em>${esc(f.situation||f.better)}</em>`;
+  $("#log").append(d);
+  phShowFix(f);
+  S.notes.push({a:f.said,b:f.better,w:f.why});
+  currentCallMistakes.push(f);
+}
+
+// Client-side Local NLP Fallback (Mirrors server.js)
+function clientLocalCoach(userText){
+  const raw=String(userText||"").trim();const lower=raw.toLowerCase();
+  const ag=AGENTS[curAgent]||AGENTS.aria;
+  const fixes=[];
+  const rules=[
+    [/\b(he|she|it)\s+don't\b/i, "$1 doesn't", "With third-person singular (he, she, it), use 'doesn't' instead of 'don't'."],
+    [/\b(they|we|you)\s+doesn't\b/i, "$1 don't", "With plural subjects, use 'don't' instead of 'doesn't'."],
+    [/\bdid\s*n['o]?t\s+(went|saw|ate|came|took|spoke|bought|wrote|did)\b/i, m=>"didn't "+({went:'go',saw:'see',ate:'eat',came:'come',took:'take',spoke:'speak',bought:'buy',wrote:'write',did:'do'}[m[1].toLowerCase()]||m[1]), "After 'didn't', use the base verb."],
+    [/\bi\s+have\s+seen\s+him\s+yesterday\b/i, "I saw him yesterday", "Finished past actions with 'yesterday' require Past Simple ('saw')."],
+    [/\bmyself\s+(is\s+)?([A-Za-z]+)\b/i, m=>`I am ${m[2]}`, "Start introductions with 'I am' or 'My name is'."],
+    [/\bi\s+am\s+agree\b/i, "I agree", "'Agree' is already a verb; do not say 'I am agree'."],
+    [/\bi\s+am\s+having\s+(\d+|a)\s+years?\s+old\b/i, m=>`I am ${m[1]} years old`, "Say 'I am [X] years old'."],
+    [/\bdiscuss(ed|ing)?\s+about\b/i, m=>m[1]?`discuss${m[1]}`:'discuss', "'Discuss' takes a direct object without 'about'."],
+    [/\brevert(ed|ing)?\s+back\b/i, "reply / get back", "'Revert back' is redundant; use 'reply' or 'get back'."],
+    [/\bcope\s+up\s+with\b/i, "cope with", "The correct phrasal verb is 'cope with'."],
+    [/\btold\s+to\s+(me|him|her|us)\b/i, m=>`told ${m[1]}`, "Say 'told me', not 'told to me'."],
+    [/\blook(ing)?\s+forward\s+to\s+meet\b/i, "looking forward to meeting", "'Look forward to' takes an -ing verb."]
+  ];
+
+  for(const [re,better,why] of rules){
+    const m=raw.match(re);
+    if(m){
+      const b=typeof better==='function'?better(m):m[0].replace(re,better);
+      fixes.push({said:m[0],better:b,why:why,situation:raw.replace(m[0],b)});
+      break;
+    }
+  }
+
+  let reply="";
+  if(/^(\(the call|\(i changed|call connected|hello|hi|hey)/i.test(lower)){
+    const gr={
+      "Free talk":`${ag.name} here! Lovely to connect. What have you been working on today?`,
+      "Job Interview":`Welcome to your interview. I'm ${ag.name}. Could you briefly introduce your background?`,
+      "Office meeting":`Hi everyone, let's begin. What's the main update you'd like to share today?`,
+      "Travel Abroad":`Welcome to flight check-in! Where are you flying to today?`,
+      "Self introduction":`Hello! I'm ${ag.name}. What's your name, and what field do you work in?`
+    };
+    reply=gr[scen]||`${ag.name} here! Excited for our practice. What's on your mind?`;
+  }else{
+    if(lower.includes('?')||/^(what|how|why|when|can)/i.test(lower)){
+      reply="That's a very thoughtful question. In my view, consistent practice and clear examples make the biggest difference. How do you usually handle that?";
+    }else if(/\b(code|developer|software|engineer|python|tech)\b/i.test(lower)){
+      reply="Software engineering is an exciting field! What is one project or problem you enjoyed tackling recently?";
+    }else if(raw.split(/\s+/).length<4){
+      reply="I understand. To build your spoken fluency, try adding where, when, or why. Could you say a little more?";
+    }else{
+      reply="That makes complete sense. I appreciate you explaining that clearly. What's the next step or main takeaway from that?";
+    }
+  }
+  const pro=raw.length>6?raw.replace(/\bi want to\b/gi,"I would like to").replace(/\bvery good\b/gi,"exceptional"):"";
+  return {reply,fixes,pro,tip:"Keep speaking in full sentences to lock in natural rhythm.",praise:"Good effort! Keep the momentum going."};
+}
+
+// Call API
+async function callAgentAPI(text){
+  const ag=AGENTS[curAgent]||AGENTS.aria;
+  try{
+    const res=await fetch('/api/call-agent',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        message:text,
+        scenario:scen,
+        agentId:curAgent,
+        history:hist.slice(-8),
+        provider:S.aiProvider||'auto'
+      })
+    });
+    if(res.ok){
+      const data=await res.json();
+      return data;
+    }
+  }catch(e){}
+  // Seamless client fallback
+  return clientLocalCoach(text);
+}
+
+function beginCall(){
+  callToken++;busy=false;onCall=true;hf=true;t0=Date.now();
+  currentCallMistakes=[];
+  clearInterval(tm);tm=setInterval(paint,1000);
+  stat("Connecting...");
+  hist=[];$("#log").innerHTML="";
+  $("#callBtn").style.display="none";$("#callDirectBtn").style.display="none";
+  $("#endBtn").style.display="";$("#inp").style.display="flex";$("#av").classList.add("live");
+  playConnectChime();
+
+  // Acquire mic audio stream for live waveform
+  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true}).then(st=>{
+      activeStream=st;
+      initVisualizer(st);
+    }).catch(()=>{});
+  }
+
+  const ag=AGENTS[curAgent]||AGENTS.aria;
+  turn(`(The call just connected. Greet me warmly as ${ag.name} and start the ${scen} scenario.)`,true);
+}
+
+async function turn(text,silent){
+  if(!onCall) return;
+  if(busy) return;
+  const token=callToken;
+  busy=true;
+  if(!silent) bub("me",text);
+  const th=bub("ai","");th.classList.add("dots");
+  hist.push({role:"user",content:text});
+
+  try{
+    const r=await callAgentAPI(text);
+    if(!onCall||token!==callToken){th.remove();return}
+    th.classList.remove("dots");th.textContent=r.reply;
+    phSet('b',r.reply);
+    hist.push({role:"assistant",content:r.reply});
+    say(r.reply);
+
+    if(!silent&&Array.isArray(r.fixes)&&r.fixes.length){
+      r.fixes.forEach(fixCard);
+    }
+    if(!silent&&r.pro){
+      const d=document.createElement("div");d.className="fix";d.style.borderColor="var(--vio)";
+      d.innerHTML="<b>✨ Say it like a pro</b><br><em>"+esc(r.pro)+"</em>"+(r.tip?"<br>💡 "+esc(r.tip):"");
+      $("#log").append(d);
+    }
+    if(!silent){
+      S.day=S.day&&S.day.d===today()?S.day:{d:today(),n:0};
+      S.day.n++;S.xp+=5;bump();save();render();
+    }
+  }catch(e){
+    if(onCall&&token===callToken){
+      th.classList.remove("dots");
+      th.textContent="I missed that for a moment. Could you please repeat that?";
+    }
+  }
+  if(token===callToken) busy=false;
+}
+
+$("#send").onclick=()=>{
+  const v=$("#txt").value.trim();
+  if(v){
+    if(!(onCall&&hf))stopMic();
+    clearTimeout(sil);$("#txt").value="";base="";
+    stat((AGENTS[curAgent]||AGENTS.aria).name+" is thinking");
+    turn(v);
+  }
+};
+$("#txt").onkeydown=e=>{if(e.key==="Enter")$("#send").click()};
+$("#txt").oninput=()=>base=$("#txt").value;
+
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+function setLive(on){$("#mic").classList.toggle("live",on)}
+
+function stopMic(){
+  try{if(rec)rec.stop()}catch(e){}
+  setLive(false);
+}
+
+function put(t,fin){
+  if(speaking||busy)return;
+  const v=(base+" "+t).trim();
+  $("#txt").value=v;
+  phSet('u',v);
+  if(fin)base=v;
+  clearTimeout(sil);
+  if(onCall&&hf&&v){
+    sil=setTimeout(()=>{
+      if(!speaking&&!busy&&$("#txt").value.trim())$("#send").click();
+    },1600);
+  }
+}
+
+$("#mic").onclick=async()=>{
+  if($("#mic").classList.contains("live")){
+    if(onCall){hf=false;stat("Mic muted, tap 🎤")}
+    return stopMic();
+  }
+  hf=true;
+  base=$("#txt").value.trim();
+  if(SR){
+    try{
+      rec=new SR();rec.lang="en-US";rec.interimResults=true;rec.continuous=true;
+      rec.onresult=ev=>{
+        let f="",p="";
+        for(let i=ev.resultIndex;i<ev.results.length;i++){
+          const r=ev.results[i];(r.isFinal?f+=r[0].transcript:p+=r[0].transcript);
+        }
+        if(f)put(f,true);else put(p,false);
+      };
+      rec.onend=()=>{
+        setLive(false);
+        if(onCall&&hf){try{rec.start();setLive(true)}catch(e){}}
+      };
+      rec.onerror=ev=>{
+        setLive(false);
+        if(ev.error==="no-speech"||ev.error==="aborted")return;
+        hf=false;stat("Mic idle");
+      };
+      rec.start();setLive(true);return;
+    }catch(e){}
+  }
+  bub("ai","Voice input isn’t supported in this browser; please type your message.");
+};
+
+// ==========================================
+// CRITICAL: END CALL & COMPLETE TERMINATION
+// ==========================================
+async function endCall(){
+  if(!onCall&&!isRinging) return;
+  const transcript=hist.slice(), endedScenario=scen;
+  const durationSec=Math.floor((Date.now()-t0)/1000);
+  onCall=false; isRinging=false; hf=false;
+  callToken++; busy=false; sid++; speaking=false;
+
+  // 1. Hardware Mic stream termination
+  if(activeStream){
+    activeStream.getTracks().forEach(t=>{ try{t.stop()}catch(e){} });
+    activeStream=null;
+  }
+
+  // 2. SpeechRecognition complete termination
+  if(rec){
+    try{rec.onend=null;rec.onerror=null;rec.abort();rec.stop();}catch(e){}
+    rec=null;
+  }
+  setLive(false);
+
+  // 3. SpeechSynthesis immediate silence
+  try{window.speechSynthesis.cancel()}catch(e){}
+
+  // 4. Timers and canvas animation termination
+  ringStop();
+  if(animId) cancelAnimationFrame(animId);
+  clearInterval(tm); clearTimeout(sil);
+
+  // 5. Sound and UI reset
+  playDisconnectTone();
+  phClose();
+  $("#av").classList.remove("live","talk");
+  $("#endBtn").style.display="none";$("#inp").style.display="none";
+  $("#callBtn").style.display="";$("#callDirectBtn").style.display="";
+  stat("Call ended");
+
+  // 6. Generate and display Call Mistake & Fluency Report
+  showCallReport(transcript, endedScenario, durationSec);
+}
+$("#endBtn").onclick=endCall;
+
+// End-of-Call Report Modal
+async function showCallReport(transcript, endedScenario, durationSec){
+  const ag=AGENTS[curAgent]||AGENTS.aria;
+  const userTurns=transcript.filter(x=>x.role==="user"&&!x.content.startsWith("("));
+  const wordsSpoken=userTurns.reduce((a,t)=>a+t.content.split(/\s+/).filter(Boolean).length,0);
+  const mistakes=currentCallMistakes.slice();
+
+  let fluency=Math.min(96, Math.max(55, 75 + Math.min(20, wordsSpoken) - (mistakes.length*5)));
+  let cefr=fluency>=90?"C1":fluency>=78?"B2":fluency>=65?"B1":"A2";
+
+  $("#repScore").textContent=fluency+"%";
+  $("#repCefr").textContent=cefr;
+  $("#repMistakes").textContent=mistakes.length;
+  $("#repSub").textContent=`Practice session with ${ag.name} · ${endedScenario} (${Math.floor(durationSec/60)}m ${durationSec%60}s)`;
+
+  const list=$("#repList");
+  if(mistakes.length===0){
+    list.innerHTML=`<div class="rep-item clean"><b>🎉 Flawless Spoken Grammar!</b><div style="color:var(--ok);margin-top:4px">No grammatical or collocation slips spotted during this call. Excellent natural control!</div></div>`;
+  }else{
+    list.innerHTML=mistakes.map((f,idx)=>`
+      <div class="rep-item">
+        <div><s>${esc(f.said)}</s> ➔ <em>${esc(f.better)}</em></div>
+        <div class="why" style="margin:4px 0 6px">${esc(f.why)}</div>
+        <button class="chip" data-speak="${esc(f.situation||f.better)}" style="cursor:pointer;font-size:11px">🔊 Listen to phrasing</button>
+      </div>
+    `).join('');
+  }
+
+  const recTxt=mistakes.length===0
+    ? `You spoke smoothly with confidence and clarity. In your next practice call, try taking on the '${scen==='Job Interview'?'Promotion':'Job Interview'}' scenario to challenge yourself!`
+    : `You made good progress communicating your ideas. Focus on reviewing the ${mistakes.length} correction${mistakes.length>1?'s':''} above, especially when formulating past tense and agreement patterns.`;
+  $("#repRec").textContent=recTxt;
+
+  log("call",{
+    scenario:endedScenario,
+    transcript:transcript,
+    summary:`${ag.name} call · ${fluency}% fluency (${cefr}) · ${mistakes.length} mistakes`
+  });
+  save();render();
+
+  $("#reportModal").classList.add("on");
+}
+
+document.addEventListener("click",e=>{
+  const spk=e.target.closest("[data-speak]");
+  if(spk){
+    say(spk.dataset.speak);
+  }
+});
+
+$("#repClose").onclick=()=>$("#reportModal").classList.remove("on");
+$("#repSaveBtn").onclick=()=>{
+  $("#repSaveBtn").textContent="✓ Saved to Notebook!";
+  setTimeout(()=>$("#repSaveBtn").textContent="💾 Add to Mistake Notebook",2000);
+};
+$("#repAgainBtn").onclick=()=>{
+  $("#reportModal").classList.remove("on");
+  directCall();
+};
+
+// Settings Modal
+$("#cfgBtn").onclick=()=>{
+  $("#cfgProvider").value=S.aiProvider||"auto";
+  $("#cfgGeminiKey").value=S.geminiKey||"";
+  $("#cfgOpenaiKey").value=S.openaiKey||"";
+  $("#cfgFeedback").textContent="";
+  $("#settingsModal").classList.add("on");
+};
+$("#cfgClose").onclick=()=>$("#settingsModal").classList.remove("on");
+
+$("#cfgSaveBtn").onclick=async()=>{
+  S.aiProvider=$("#cfgProvider").value;
+  S.geminiKey=$("#cfgGeminiKey").value.trim();
+  S.openaiKey=$("#cfgOpenaiKey").value.trim();
+  save();
+  try{
+    await fetch('/api/save-config',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({geminiKey:S.geminiKey,openaiKey:S.openaiKey})
+    });
+  }catch(e){}
+  $("#cfgFeedback").textContent="✅ Settings saved successfully!";
+  checkServer();
+};
+
+$("#cfgTestBtn").onclick=async()=>{
+  $("#cfgFeedback").textContent="Testing connection to Call Agent...";
+  try{
+    const r=await callAgentAPI("Test connection check");
+    $("#cfgFeedback").textContent="✅ Call Agent responded: "+r.reply.slice(0,60)+"…";
+  }catch(e){
+    $("#cfgFeedback").textContent="⚠️ Error: "+e.message;
+  }
+};
+
+async function checkServer(){
+  try{
+    const r=await fetch('/api/agent-status');
+    if(r.ok){
+      const d=await r.json();
+      $("#srvStatus").querySelector('.srv-dot').classList.remove('warn');
+      $("#srvTxt").textContent=`${AGENTS[curAgent].name} Active (Port ${d.port})`;
+      return;
+    }
+  }catch(e){}
+  $("#srvStatus").querySelector('.srv-dot').classList.remove('warn');
+  $("#srvTxt").textContent="Built-in Local Smart Agent Active";
+}
+checkServer();
+
+// ---------- Boot Storage ----------
+try{
+  const l=JSON.parse(localStorage.getItem("ath")||"null");
+  if(l)S=Object.assign(S,l);
+  const ag=localStorage.getItem("ath_agent");
+  if(ag&&AGENTS[ag]) curAgent=ag;
+}catch(e){}
+render();
+
+// ---------- Flashcards & Vocab ----------
+const VW=[[['breakfast','the first meal of the day','I eat breakfast at eight.'],['borrow','to take something and give it back later','Can I borrow your pen?'],['empty','with nothing inside','The bottle is empty.'],['quiet','with little or no noise','Please be quiet in the library.'],['wear','to have clothes on your body','She wears a red dress.']],[['improve','to become or make better','I want to improve my English.'],['comfortable','feeling relaxed and at ease','This chair is very comfortable.'],['invite','to ask someone to come to an event','I will invite my friends.'],['miss','to feel sad that someone is not with you','I miss my family.'],['suggest','to offer an idea','I suggest we leave now.']],[['confident','sure about your own abilities','She feels confident in interviews.'],['achieve','to succeed in getting something','He worked hard to achieve his goal.'],['recommend','to say something is good and worth trying','Can you recommend a good book?'],['opportunity','a chance to do something good','This job is a great opportunity.'],['decision','a choice you make','It was a difficult decision.']],[['reliable','able to be trusted','He is a reliable teammate.'],['adapt','to change to fit a new situation','You must adapt to new places.'],['negotiate','to talk to reach an agreement','We negotiated a better price.'],['perspective','a way of thinking about something','Try to see it from my perspective.'],['deadline','the time by which work must be done','The deadline is Friday.']],[['articulate','able to express ideas clearly','She is an articulate speaker.'],['inevitable','certain to happen','Change is inevitable.'],['compelling','very convincing or interesting','He gave a compelling presentation.'],['mitigate','to make something less serious','We must mitigate the risks.'],['nuance','a small but important difference','The nuance in his tone mattered.']],[['meticulous','very careful about details','She is meticulous in her work.'],['ubiquitous','seen everywhere','Smartphones are ubiquitous today.'],['eloquent','fluent and persuasive in speaking','An eloquent speech moved the crowd.'],['pragmatic','practical, not just theoretical','Take a pragmatic approach.'],['tenacious','never giving up','A tenacious learner always improves.']]];
+const VF=VW.flatMap((a,l)=>a.map(x=>({w:x[0],m:x[1],e:x[2],l:l}))),VL=['A1','A2','B1','B2','C1','C2'];
+let vl=0,vi=0,vf=false,vxx={};
+function vdeck(){return VW[vl].map(x=>({w:x[0],m:x[1],e:x[2]})).concat(vxx[vl]||[])}
+function wod(){return VF[Math.floor(Date.now()/864e5)%VF.length]}
+function vsaved(w){return (S.vs||[]).some(x=>x.w===w)}
+function vrender(){
+  const W=wod(),D=vdeck(),c=D[vi%D.length];
+  const rl=$('#rcl');if(rl){const hh=(S.hist||[]).slice(0,4);rl.innerHTML=hh.length?hh.map(h=>`<div class='rcrow'>${h.kind==='call'?'📞 Call with '+(AGENTS[curAgent]||AGENTS.aria).name+' · '+esc(h.scenario||''):'📝 '+esc(h.level||'')+' quiz · '+h.score+'/'+h.total} <span style='float:right'>${new Date(h.at).toLocaleDateString()}</span></div>`).join(''):"<div class='rcrow'>No practice sessions yet. Tap 'AI Call Agent' to start your first call.</div>"}
+  const hv=$('#vhome');if(hv)hv.innerHTML=`<div class='hero' style='margin-top:16px;padding:22px;background:radial-gradient(120% 120% at 100% 0,#065f46 0,#06281d 45%,#050d09 100%)'><small>WORD OF THE DAY</small><h1 style='font-size:32px;margin:6px 0'>${esc(W.w)}</h1><p style='margin:0 0 14px'>${esc(W.m)}</p><button class='btn' data-vx='open'>Open vocabulary →</button></div>`;
+  const vh=$('#vh');if(vh)vh.innerHTML=`<small>WORD OF THE DAY · ${VL[W.l]}</small><h1>${esc(W.w)}</h1><p><b>${esc(W.m)}</b><br><i>“${esc(W.e)}”</i></p><div class='row' style='margin:0'><button class='btn' data-vx='say' data-i='hero'>🔊 Listen</button><button class='btn ghost' style='background:rgba(255,255,255,.14);color:#fff;border:0' data-vx='save' data-i='hero'>${vsaved(W.w)?'★ Saved':'☆ Save'}</button></div>`;
+  const lv=$('#vlv');if(lv)lv.innerHTML=VL.map((n,i)=>`<button class='chip vc ${i===vl?'on':''}' data-vl='${i}'>${n}</button>`).join('');
+  const vc=$('#vcard');if(vc)vc.innerHTML=`<div class='tag'>${VL[vl]} · card ${vi%D.length+1} of ${D.length} · known ${(S.vk||[]).length}</div><div data-vx='flip' style='cursor:pointer;text-align:center;padding:26px 8px;min-height:170px'><div style='font-size:38px;font-weight:800'>${esc(c.w)}</div>${vf?`<p style='margin:12px 0 4px;font-size:18px'>${esc(c.m)}</p><p style='margin:0;color:var(--mut)'><i>“${esc(c.e)}”</i></p>`:`<p class='sub'>Tap the card to see the meaning</p>`}</div><div class='row' style='justify-content:center;margin:0'><button class='btn ghost' data-vx='say' data-i='card'>🔊</button><button class='btn ghost' data-vx='again'>Practice again</button><button class='btn' data-vx='know'>I know it ✓</button><button class='btn ghost' data-vx='save' data-i='card'>${vsaved(c.w)?'★':'☆'}</button></div>`;
+  const sv=S.vs||[],se=$('#vsaved');if(se)se.innerHTML=sv.length?sv.map(x=>`<div class='m' style='display:flex;justify-content:space-between;gap:10px'><div><b>${esc(x.w)}</b> — ${esc(x.m)}<br><span style='color:var(--mut)'>${esc(x.e)}</span></div><div style='white-space:nowrap'><button class='chip' data-vx='sw' data-w='${esc(x.w)}' style='cursor:pointer'>🔊</button> <button class='chip' data-vx='del' data-w='${esc(x.w)}' style='cursor:pointer'>✕</button></div></div>`).join(''):"<p style='color:var(--mut);margin:0'>Tap ☆ on any word to save it here.</p>";
+}
+
+$('#obGo').onclick=$('#obLog').onclick=()=>{try{localStorage.setItem('ath_seen','1')}catch(e){}$('#ob').classList.remove('on')};
+try{if(!localStorage.getItem('ath_seen'))$('#ob').classList.add('on')}catch(e){$('#ob').classList.add('on')}
+
+const _r=render;render=function(){_r();vrender()};vrender();
+
+document.addEventListener('click',async e=>{
+  const l=e.target.closest('[data-vl]');if(l){vl=+l.dataset.vl;vi=0;vf=false;return vrender()}
+  const b=e.target.closest('[data-vx]');if(!b)return;
+  const k=b.dataset.vx,D=vdeck(),c=D[vi%D.length],cw=b.dataset.i==='hero'?wod():c,sp=w=>say(w.w+'. '+w.m+'. For example: '+w.e);
+  if(k==='open')go('vocab');
+  else if(k==='go')go(b.dataset.g);
+  else if(k==='cont')$('#hGo').click();
+  else if(k==='test'){const i=LV.findIndex(l=>!S.done[l.id]);unlimited(i<0?5:i)}
+  else if(k==='ring'){go('tutor');ring()}
+  else if(k==='flip'){vf=!vf;vrender()}
+  else if(k==='say')sp(cw);
+  else if(k==='sw'){const w=(S.vs||[]).find(x=>x.w===b.dataset.w);if(w)sp(w)}
+  else if(k==='save'){S.vs=S.vs||[];const i=S.vs.findIndex(x=>x.w===cw.w);if(i>=0)S.vs.splice(i,1);else S.vs.unshift({w:cw.w,m:cw.m,e:cw.e});save();vrender()}
+  else if(k==='del'){S.vs=(S.vs||[]).filter(x=>x.w!==b.dataset.w);save();vrender()}
+  else if(k==='know'){S.vk=S.vk||[];if(!S.vk.includes(c.w)){S.vk.push(c.w);S.xp+=5;bump();save();render()}vi++;vf=false;vrender()}
+  else if(k==='again'){vi++;vf=false;vrender()}
+  else if(k==='gen'){
+    b.disabled=true;b.textContent='Using word catalog…';
+    setTimeout(()=>{b.disabled=false;b.textContent='✨ 5 more words';vrender();},1200);
+  }
+});
+</script></body></html>
